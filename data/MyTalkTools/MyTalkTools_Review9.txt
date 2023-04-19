@@ -1,0 +1,22 @@
+Well-conceived app 
+
+The main reason I like this, apart from very clean and simple boards that are highly responsive, is that is intelligently backed up and synchronized with a web-based authoring environment. It is only a matter of time before the iPad is stolen, dropped, or missing. With this software, you get your new device, type in a name and password, and voila--your boards are re-downloaded. It's a great concept. 
+
+There is a bit of an initial learning curve, but once you learn it, it's pretty straight forward. Took me a couple hours before I felt comfortable, but now it seems fine. 
+
+When there's a field of 2, the images are nice and huge and fill most of the space, rather than most apps where you're limited to a tiny square. 
+
+Also, you can create boards and sub-boards galore, so the hierarchy of language starts to make sense, and become usable, vs other programs, where it's a flat hierarchy. 
+Also, with this app, you can import pictures from the web incredibly easily just by typing a keyword search. For examble, we buy a certain brand of yogurt, and i typed that brand into MyTalk Mobile's web search, and a picture of the package instantly appeared, well photographed, clean, etc. I just selected it, and it worked great. 
+
+For teachers and speech pathologists, you can have multiple sets of boards for multiple clients, and copy and paste boards and sub-boards. Since boards are synced with a web-based authoriing workspace, you can replicate these boards on ANY iPhone or iPad simply by typing in a username and password. For example, a client can have access to their board on their i-device, and you can log in as them on your own iPad and instantly pull up their board. It's pretty cool. They've really thought it through. 
+
+The responsiveness is great--as soon as you press the picture, you hear the sound, and the picture "blinks" to give you visual feedback. 
+
+Downsides: 
+
+1) When authoring new boards on the iPad, seems slightly buggy--when pasting cells, it seems to create an endless loop. But you quickly figure out workarounds, but it seems like a lot of extra pointing and clicking. 
+
+2) The web authoring environment is great in concept, though it is quite pokey. I find it faster to author on the iPad, which is ironic, because they created the web authoring environment to enable faster authoring. 
+
+I am a speech pathologist and use this app with a couple of my pts. I love the affordability of this app the only complaint I have is that you can't delete and add cells on the iPad without changing the whole board. The only way I've found to delete and add cells without changing the board is using the online workspace, however it cost more money every month! Would continue to recommend this app for my pts if that could be fixed making it easier to modify boards without using workspace. Some of my pts can barely afford the iPad plus app not including the added fee of workspace! Can we get an update to make adding and deleting cells easier? 
