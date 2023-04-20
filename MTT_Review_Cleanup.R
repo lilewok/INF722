@@ -22,7 +22,9 @@ tidy_mtt <- unnest_tokens(word,mtt_reviews)
 data("stop_words")
 
 #include custom stop words
-custom_stop_words <- bind_rows(tibble(word = c("app","apps","apple"),
+custom_stop_words <- bind_rows(tibble(word = c("app","apps","apple","ipad","aac","touchchat","proloquo2go","ve",
+                                               "mytalktools","mytalk","don","too","iphone","day","pts","lot","lot",
+                                               "itunes","it's","i've","ipod","2","000","20","10","3","5"),
                                       lexicon = c("custom")),
                                stop_words)
 

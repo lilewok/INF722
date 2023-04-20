@@ -23,7 +23,7 @@ custom_stop_words <- bind_rows(tibble(word = c("app","apps","apple","ipad","aac"
                                                "mytalktools","mytalk","don","too","iphone","day","pts","lot","lot",
                                                "itunes","it's","i've","ipod","2","000","20","10","3","5"),
                                       lexicon = c("custom")),
-                               stop_words)
+                                      stop_words)
 
 #removing all stop words
 tc_reviews <- tc_reviews %>% anti_join(custom_stop_words)
