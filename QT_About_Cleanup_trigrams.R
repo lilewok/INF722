@@ -40,3 +40,4 @@ tidy_qt %>%
   ggplot(aes(n, word)) +
   geom_col() +
   labs(y = NULL)
+

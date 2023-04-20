@@ -35,7 +35,7 @@ tidy_ec %>% count(word, sort = TRUE)
 #frequency graph
 tidy_ec %>%
   count(word, sort = TRUE) %>%
-  filter(n > 5) %>%
+  filter(n > 2) %>%
   mutate(word = reorder(word, n)) %>%
   ggplot(aes(n, word)) +
   geom_col() +
