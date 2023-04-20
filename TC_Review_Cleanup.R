@@ -13,7 +13,7 @@ list(tc_reviews)
 #  str_replace_all(., "\\p{Punct}", " ")  
 
 #places data into data frame table
-tc_reviews_df <- tibble(tc_reviews)
+#tc_reviews_df <- tibble(tc_reviews)
 
 #loading dataset called stop_words
 data("stop_words")

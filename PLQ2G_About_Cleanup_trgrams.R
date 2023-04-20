@@ -2,21 +2,21 @@ library(tidyverse)
 library(tidytext)
 
 #Read in file 
-mtt_reviews <- read.csv("data/MyTalkTools/MTT.csv")
+plq2g <- read_file("data/Proloquo2go/Proloquo2go-About.txt")
 
 #output file to console 
-list(mtt_reviews)
+#cat(plq2g)
 
 #Remove punctuation and replace with space
 #also removes extra white space
-#mtt_reviews <- str_replace_all(mtt_reviews, "\\s+", " ")# %>% 
-#  str_replace_all(., "\\p{Punct}", " ")  
+plq2g <- str_replace_all(plq2g, "\\s+", " ") %>% 
+  str_replace_all(., "\\p{Punct}", " ")  
 
 #places data into data frame table
-#mtt_reviews_df <- tibble(mtt_reviews)
+plq2g_df <- tibble(plq2g)
 
 #creating unigrams
-tidy_mtt <- unnest_tokens(word,mtt_reviews)
+tidy_plq2g <- plq2g_df %>% unnest_tokens(word,plq2g, token = "ngrams", n= 3)
 
 #loading dataset called stop_words
 data("stop_words")
@@ -27,17 +27,16 @@ custom_stop_words <- bind_rows(tibble(word = c("app","apps","apple"),
                                stop_words)
 
 #removing all stop words
-mtt_reviews <- mtt_reviews %>% anti_join(custom_stop_words)
+tidy_plq2g <- tidy_plq2g %>% anti_join(custom_stop_words)
 
 #word count
-mtt_reviews %>% count(word, sort = TRUE) 
+tidy_plq2g %>% count(word, sort = TRUE) 
 
 #frequency graph
-mtt_reviews %>%
+tidy_plq2g %>%
   count(word, sort = TRUE) %>%
-  filter(n > 2) %>%
+  filter(n > 1) %>%
   mutate(word = reorder(word, n)) %>%
   ggplot(aes(n, word)) +
   geom_col() +
   labs(y = NULL)
-
