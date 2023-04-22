@@ -35,13 +35,10 @@ library(tidytext)
 ###Process Data###      
       tidy_mtt <- mtt_df %>% unnest_tokens(word,mtt) 
       tidy_mtt <- tidy_mtt %>% anti_join(custom_stop_words)
-      write_csv(tidy_mtt, output_file)
       tidy_mtt2 <- mtt_df %>% unnest_tokens(word,mtt, token = "ngrams", n= 2) 
       tidy_mtt2 <- tidy_mtt2 %>% anti_join(custom_stop_words)
-      write_csv(tidy_mtt2, output_file2)
       tidy_mtt3 <- mtt_df %>% unnest_tokens(word,mtt, token = "ngrams", n= 3)
       tidy_mtt3 <- tidy_mtt3 %>% anti_join(custom_stop_words)
-      write_csv(tidy_mtt3, output_file3) 
 
   # read in the files and combine the data
     mtt_reviews <- map(file_paths, read_file) %>% 
@@ -74,63 +71,69 @@ library(tidytext)
       mtt_reviews3 <- mtt_reviews3 %>% anti_join(custom_stop_words)
       
 
-    # write the combined data frame to a CSV file
+
+
+###Output Data###
+    #word count
+      tidy_mtt <- tidy_mtt %>% count(word, sort = TRUE) 
+      tidy_mtt2 <-tidy_mtt2 %>% count(word, sort = TRUE) 
+      tidy_mtt3 <-tidy_mtt3 %>% count(word, sort = TRUE) 
+      mtt_reviews <- mtt_reviews %>% count(word, sort = TRUE) 
+      mtt_reviews2 <- mtt_reviews2 %>% count(word, sort = TRUE) 
+      mtt_reviews3 <- mtt_reviews3 %>% count(word, sort = TRUE) 
+
+   # write the combined data frame to a CSV file
+      write_csv(tidy_mtt, output_file)
+      write_csv(tidy_mtt2, output_file2)
+      write_csv(tidy_mtt3, output_file3)
       write_csv(mtt_reviews, output_file4)
       write_csv(mtt_reviews2, output_file5)
       write_csv(mtt_reviews3, output_file6)
 
 
-#word count
-tidy_mtt %>% count(word, sort = TRUE) 
-tidy_mtt2 %>% count(word, sort = TRUE) 
-tidy_mtt3 %>% count(word, sort = TRUE) 
-mtt_reviews %>% count(word, sort = TRUE) 
-mtt_reviews2 %>% count(word, sort = TRUE) 
-mtt_reviews3 %>% count(word, sort = TRUE) 
 
-
-
-#frequency graph
-tidy_mtt %>%
-  count(word, sort = TRUE) %>%
-  filter(n > 0) %>%
-  mutate(word = reorder(word, n)) %>%
-  ggplot(aes(n, word)) +
-  geom_col() +
-  labs(y = NULL)
-tidy_mtt2 %>%
-  count(word, sort = TRUE) %>%
-  filter(n > 0) %>%
-  mutate(word = reorder(word, n)) %>%
-  ggplot(aes(n, word)) +
-  geom_col() +
-  labs(y = NULL)
-tidy_mtt3 %>%
-  count(word, sort = TRUE) %>%
-  filter(n > 1) %>%
-  mutate(word = reorder(word, n)) %>%
-  ggplot(aes(n, word)) +
-  geom_col() +
-  labs(y = NULL)
-mtt_reviews %>%
-  count(word, sort = TRUE) %>%
- filter(n > 2) %>%
-  mutate(word = reorder(word, n)) %>%
-  ggplot(aes(n, word)) +
-  geom_col() +
-  labs(y = NULL)
-mtt_reviews2 %>%
-  count(word, sort = TRUE) %>%
-  filter(n > 0) %>%
-  mutate(word = reorder(word, n)) %>%
-  ggplot(aes(n, word)) +
-  geom_col() +
-  labs(y = NULL)
-mtt_reviews3 %>%
-  count(word, sort = TRUE) %>%
-  filter(n > 0) %>%
-  mutate(word = reorder(word, n)) %>%
-  ggplot(aes(n, word)) +
-  geom_col() +
-  labs(y = NULL)
+###Create Graphs###
+    #frequency graph
+      tidy_mtt %>%
+        count(word, sort = TRUE) %>%
+        filter(n > 0) %>%
+        mutate(word = reorder(word, n)) %>%
+        ggplot(aes(n, word)) +
+        geom_col() +
+        labs(y = NULL)
+      tidy_mtt2 %>%
+        count(word, sort = TRUE) %>%
+        filter(n > 0) %>%
+        mutate(word = reorder(word, n)) %>%
+        ggplot(aes(n, word)) +
+        geom_col() +
+        labs(y = NULL)
+      tidy_mtt3 %>%
+        count(word, sort = TRUE) %>%
+        filter(n > 0) %>%
+        mutate(word = reorder(word, n)) %>%
+        ggplot(aes(n, word)) +
+        geom_col() +
+        labs(y = NULL)
+      mtt_reviews %>%
+        count(word, sort = TRUE) %>%
+       filter(n > 0) %>%
+        mutate(word = reorder(word, n)) %>%
+        ggplot(aes(n, word)) +
+        geom_col() +
+        labs(y = NULL)
+      mtt_reviews2 %>%
+        count(word, sort = TRUE) %>%
+        filter(n > 0) %>%
+        mutate(word = reorder(word, n)) %>%
+        ggplot(aes(n, word)) +
+        geom_col() +
+        labs(y = NULL)
+      mtt_reviews3 %>%
+        count(word, sort = TRUE) %>%
+        filter(n > 0) %>%
+        mutate(word = reorder(word, n)) %>%
+        ggplot(aes(n, word)) +
+        geom_col() +
+        labs(y = NULL)
 
