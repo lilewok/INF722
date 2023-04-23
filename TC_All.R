@@ -177,7 +177,7 @@ ggplot(frequency, aes(x = proportion, y = `MyTalkTools`,
                       color = abs(`MyTalkTools` - proportion))) +
   geom_abline(color = "gray40", lty = 2) +
   geom_jitter(alpha = 0.1, size = 2.5, width = 0.3, height = 0.3) +
-  geom_text(aes(label = word), check_overlap = TRUE, vjust = 1.5) +
+  geom_text(aes(label = paste(word, collapse = ", ")), check_overlap = TRUE, vjust = 1.5) +
   scale_x_log10(labels = percent_format()) +
   scale_y_log10(labels = percent_format()) +
   scale_color_gradient(limits = c(0, 0.001), 
