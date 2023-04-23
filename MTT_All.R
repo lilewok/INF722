@@ -33,12 +33,12 @@ library(tidytext)
                                             lexicon = c("custom")),
                                      stop_words)
 ###Process Data###      
-      tidy_mtt <- mtt_df %>% unnest_tokens(word,mtt) 
-      tidy_mtt <- tidy_mtt %>% anti_join(custom_stop_words)
-      tidy_mtt2 <- mtt_df %>% unnest_tokens(word,mtt, token = "ngrams", n= 2) 
-      tidy_mtt2 <- tidy_mtt2 %>% anti_join(custom_stop_words)
-      tidy_mtt3 <- mtt_df %>% unnest_tokens(word,mtt, token = "ngrams", n= 3)
-      tidy_mtt3 <- tidy_mtt3 %>% anti_join(custom_stop_words)
+      mtt_about <- mtt_df %>% unnest_tokens(word,mtt) 
+      mtt_about <- mtt_about %>% anti_join(custom_stop_words)
+      mtt_about2 <- mtt_df %>% unnest_tokens(word,mtt, token = "ngrams", n= 2) 
+      mtt_about2 <- mtt_about2 %>% anti_join(custom_stop_words)
+      mtt_about3 <- mtt_df %>% unnest_tokens(word,mtt, token = "ngrams", n= 3)
+      mtt_about3 <- mtt_about3 %>% anti_join(custom_stop_words)
 
   # read in the files and combine the data
     mtt_reviews <- map(file_paths, read_file) %>% 
@@ -75,40 +75,55 @@ library(tidytext)
 
 ###Output Data###
     #word count
-      tidy_mtt <- tidy_mtt %>% count(word, sort = TRUE) 
-      tidy_mtt2 <-tidy_mtt2 %>% count(word, sort = TRUE) 
-      tidy_mtt3 <-tidy_mtt3 %>% count(word, sort = TRUE) 
+      mtt_about <- mtt_about %>% count(word, sort = TRUE) 
+      mtt_about2 <-mtt_about2 %>% count(word, sort = TRUE) 
+      mtt_about3 <-mtt_about3 %>% count(word, sort = TRUE) 
       mtt_reviews <- mtt_reviews %>% count(word, sort = TRUE) 
       mtt_reviews2 <- mtt_reviews2 %>% count(word, sort = TRUE) 
       mtt_reviews3 <- mtt_reviews3 %>% count(word, sort = TRUE) 
 
    # write the combined data frame to a CSV file
-      write_csv(tidy_mtt, output_file)
-      write_csv(tidy_mtt2, output_file2)
-      write_csv(tidy_mtt3, output_file3)
+      write_csv(mtt_about, output_file)
+      write_csv(mtt_about2, output_file2)
+      write_csv(mtt_about3, output_file3)
       write_csv(mtt_reviews, output_file4)
       write_csv(mtt_reviews2, output_file5)
       write_csv(mtt_reviews3, output_file6)
+      
 
+      # frequency matrices
+      freq_matrix <- table(mtt_about$word, mtt_about$n)
+      print(freq_matrix)
+      freq_matrix <- table(mtt_about2$word, mtt_about2$n)
+      print(freq_matrix)
+      freq_matrix <- table(mtt_about3$word, mtt_about3$n)
+      print(freq_matrix)
+      freq_matrix <- table(mtt_reviews$word, mtt_reviews$n)
+      print(freq_matrix)
+      freq_matrix <- table(mtt_reviews2$word, mtt_reviews2$n)
+      print(freq_matrix)
+      freq_matrix <- table(mtt_reviews3$word, mtt_reviews3$n)
+      print(freq_matrix)
+      
 
 
 ###Create Graphs###
     #frequency graph
-      tidy_mtt %>%
+      mtt_about %>%
         count(word, sort = TRUE) %>%
         filter(n > 0) %>%
         mutate(word = reorder(word, n)) %>%
         ggplot(aes(n, word)) +
         geom_col() +
         labs(y = NULL)
-      tidy_mtt2 %>%
+      mtt_about2 %>%
         count(word, sort = TRUE) %>%
         filter(n > 0) %>%
         mutate(word = reorder(word, n)) %>%
         ggplot(aes(n, word)) +
         geom_col() +
         labs(y = NULL)
-      tidy_mtt3 %>%
+      mtt_about3 %>%
         count(word, sort = TRUE) %>%
         filter(n > 0) %>%
         mutate(word = reorder(word, n)) %>%
