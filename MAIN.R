@@ -5,11 +5,11 @@
   library(RColorBrewer)
   library(wordcloud2)
   library(scales)
-
+  library(webshot)
+  
 ###Read in files###
   # set the directory containing the about files
-  mtt <- read_file("data/MyTalkTools/MyTalkT
-ools-About.txt")
+    mtt <- read_file("data/MyTalkTools/MyTalkTools-About.txt")
     plq2g <- read_file("data/Proloquo2go/Proloquo2go-About.txt")
     qt <- read_file("data/QuickTalk/QuickTalk-About.txt")
     tc <- read_file("data/TouchChat/TouchChat-About.txt")
@@ -493,29 +493,34 @@ ools-About.txt")
   #WordClouds      
       set.seed(1234) # for reproducibility 
 
-      wordcloud2(data=mtt_about, size=1.0, color='random-dark')
-      wordcloud2(data=mtt_about2, size=1.0, color='random-dark')
-      wordcloud2(data=mtt_about3, size=1.0, color='random-dark')
-      wordcloud2(data=mtt_reviews, size=1.0, color='random-dark')
-      wordcloud2(data=mtt_reviews2, size=1.0, color='random-dark')
-      wordcloud2(data=mtt_reviews3, size=1.0, color='random-dark')
-      wordcloud2(data=plq2g_about, size=1.0, color='random-dark')
-      wordcloud2(data=plq2g_about2, size=1.0, color='random-dark')
-      wordcloud2(data=plq2g_about3, size=1.0, color='random-dark')
-      wordcloud2(data=plq2g_reviews, size=1.0, color='random-dark')
-      wordcloud2(data=plq2g_reviews2, size=1.0, color='random-dark')
-      wordcloud2(data=plq2g_reviews3, size=1.0, color='random-dark')
-      wordcloud2(data=qt_about, size=1.0, color='random-dark')
-      wordcloud2(data=qt_about2, size=1.0, color='random-dark')
-      wordcloud2(data=qt_about3, size=1.0, color='random-dark')
-      wordcloud2(data=qt_reviews, size=1.0, color='random-dark')
-      wordcloud2(data=qt_reviews2, size=1.0, color='random-dark')
-      wordcloud2(data=qt_reviews3, size=1.0, color='random-dark')
-      wordcloud2(data=tc_about, size=1.0, color='random-dark')
-      wordcloud2(data=tc_about2, size=1.0, color='random-dark')
-      wordcloud2(data=tc_about3, size=1.0, color='random-dark')
-      wordcloud2(data=tc_reviews, size=1.0, color='random-dark')
-      wordcloud2(data=tc_reviews2, size=1.0, color='random-dark')
-      wordcloud2(data=tc_reviews3, size=1.0, color='random-dark')
+      wordcloud2(data=mtt_about, size=0.5, color='random-dark')
+      wordcloud2(data=mtt_about2, size=0.5, color='random-dark')
+      wordcloud2(data=mtt_about3, size=0.5, color='random-dark')
+      wordcloud2(data=mtt_reviews, size=0.5, color='random-dark')
+      wordcloud2(data=mtt_reviews2, size=0.5, color='random-dark')
+      wordcloud2(data=mtt_reviews3, size=0.5, color='random-dark')
+      wordcloud2(data=plq2g_about, size=0.5, color='random-dark')
+      wordcloud2(data=plq2g_about2, size=0.5, color='random-dark')
+      wordcloud2(data=plq2g_about3, size=0.5, color='random-dark')
+      wordcloud2(data=plq2g_reviews, size=0.5, color='random-dark')
+      wordcloud2(data=plq2g_reviews2, size=0.5, color='random-dark')
+      wordcloud2(data=plq2g_reviews3, size=0.5, color='random-dark')
+      wordcloud2(data=qt_about, size=0.5, color='random-dark')
+      wordcloud2(data=qt_about2, size=0.5, color='random-dark')
+      wordcloud2(data=qt_about3, size=0.5, color='random-dark')
+      wordcloud2(data=qt_reviews, size=0.5, color='random-dark')
+      wordcloud2(data=qt_reviews2, size=0.5, color='random-dark')
+      wordcloud2(data=qt_reviews3, size=0.5, color='random-dark')
+      wordcloud2(data=tc_about, size=0.5, color='random-dark')
+      wordcloud2(data=tc_about2, size=0.5, color='random-dark')
+      wordcloud2(data=tc_about3, size=0.5, color='random-dark')
+      wordcloud2(data=tc_reviews, size=0.5, color='random-dark')
+      wordcloud2(data=tc_reviews2, size=0.5, color='random-dark')
+      wordcloud2(data=tc_reviews3, size=0.5, color='random-dark')
+      
+  # save the word cloud as a PNG file
+      png(file = "my_wordcloud.png", width = 800, height = 600)
+      mtt_about
+      dev.off()
       
       
