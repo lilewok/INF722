@@ -53,6 +53,7 @@ ools-About.txt")
       output_file23 <- "data/TouchChat/tc_reviews2.csv"
       output_file24 <- "data/TouchChat/tc_reviews3.csv"
       output_file_test <- "data/about_Test.csv"
+      output_file_sw <- "data/our_stop_words.csv"
       
 ###Cleanup About Files###
   #Remove punctuation and replace with space
@@ -81,6 +82,7 @@ ools-About.txt")
                                                      "itunes","it's","i've","ipod","2","000","20","10","3","5"),
                                             lexicon = c("custom")),
                                      stop_words)
+      write_csv(custom_stop_words, output_file_sw)
 ###Process Data###     
   #Create grams
       mtt_about <- mtt_df %>% unnest_tokens(word,mtt) 
