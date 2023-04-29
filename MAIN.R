@@ -204,19 +204,19 @@
           tdm_matrix <- as.matrix(tdm)
           tdm_matrix
  
-     # # Create a term document matrix of bigrams
-     #      mycorpus2 <- Corpus(VectorSource(c(mtt_about, plq2g_about, qt_about, tc_about, mtt_reviews, plq2g_reviews, qt_reviews, tc_reviews)))
-     #      mytokenizer2 <- function(x) 
-     #      {
-     #        unlist(lapply(ngrams(words(x), 2), paste, collapse = " "))
-     #      }
-     # 
-     #      #mycorpus2 <- tm_map(mycorpus2, removePunctuation)
-     #      #mycorpus2 <- tm_map(mycorpus2, removeWords, stopwords("english"))
-     #      tdm2 <- DocumentTermMatrix(mycorpus2, control = list(tokenize = mytokenizer2))
-     #      tdm_matrix2 <- as.matrix(tdm2)
-     #      tdm_matrix2
-     #      
+      # Create a term document matrix of bigrams
+          mycorpus2 <- VCorpus(VectorSource(c(mtt_about, plq2g_about, qt_about, tc_about, mtt_reviews, plq2g_reviews, qt_reviews, tc_reviews)))
+          mytokenizer2 <- function(x) 
+          {
+            words <- unlist(lapply(ngrams(words(x), 2), paste, collapse = " "))
+            list(words)
+          }
+          
+          mycorpus2 <- tm_map(mycorpus2, removePunctuation)
+          mycorpus2 <- tm_map(mycorpus2, removeWords, stopwords("english"))
+          tdm2 <- TermDocumentMatrix(mycorpus2, control = list(tokenize = mytokenizer2))
+          tdm_matrix2 <- as.matrix(tdm2)
+          tdm_matrix2
      #  
      # # Create a term document matrix of trigrams 
      #      mycorpus3 <- Corpus(VectorSource(c(mtt_about3, plq2g_about3, qt_about3, tc_about3, mtt_reviews3, plq2g_reviews3, qt_reviews3, tc_reviews3 )))
@@ -258,7 +258,7 @@
           write_csv(tc_reviews3, output_file24)
           write_csv(custom_stop_words, output_file_sw)
           write.csv(as.matrix(tdm_matrix), file = output_file_tdm_unigrams)
-          #write.csv(as.matrix(tdm_matrix2), file = output_file_tdm_bigrams)
+          write.csv(as.matrix(tdm_matrix2), file = output_file_tdm_bigrams)
           #write.csv(as.matrix(tdm_matrix3), file = output_file_tdm_trigrams)
     
     #word count
