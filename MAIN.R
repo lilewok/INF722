@@ -1,12 +1,13 @@
 ###Use these libraries###
-  library(tidyverse)
-  library(tidytext)
-  library(wordcloud)
-  library(RColorBrewer)
-  library(wordcloud2)
-  library(scales)
-  library(webshot)
-  
+    library(tidyverse)
+    library(tidytext)
+    library(RColorBrewer)
+    library(wordcloud2)
+    library(htmlwidgets)
+    library(webshot2)
+    library(tm)
+
+
 ###Read in files###
   # set the directory containing the about files
     mtt <- read_file("data/MyTalkTools/MyTalkTools-About.txt")
@@ -52,8 +53,11 @@
       output_file22 <- "data/TouchChat/tc_reviews.csv"
       output_file23 <- "data/TouchChat/tc_reviews2.csv"
       output_file24 <- "data/TouchChat/tc_reviews3.csv"
-      output_file_test <- "data/about_Test.csv"
+      #output_file_test <- "data/about_Test.csv"
       output_file_sw <- "data/our_stop_words.csv"
+      output_file_tdm_unigrams <- "data/tdm_unigram.csv"
+      output_file_tdm_bigrams <- "data/tdm_bigram.csv"
+      output_file_tdm_trigrams <- "data/tdm_trigram.csv"
       
 ###Cleanup About Files###
   #Remove punctuation and replace with space
@@ -82,210 +86,259 @@
                                                      "itunes","it's","i've","ipod","2","000","20","10","3","5"),
                                             lexicon = c("custom")),
                                      stop_words)
-      write_csv(custom_stop_words, output_file_sw)
+
+
+      
+      
+      
 ###Process Data###     
-  #Create grams
-      mtt_about <- mtt_df %>% unnest_tokens(word,mtt) 
-      mtt_about <- mtt_about %>% anti_join(custom_stop_words)
-      mtt_about2 <- mtt_df %>% unnest_tokens(word,mtt, token = "ngrams", n= 2) 
-      mtt_about2 <- mtt_about2 %>% anti_join(custom_stop_words)
-      mtt_about3 <- mtt_df %>% unnest_tokens(word,mtt, token = "ngrams", n= 3)
-      mtt_about3 <- mtt_about3 %>% anti_join(custom_stop_words)
-      plq2g_about <- plq2g_df %>% unnest_tokens(word,plq2g) 
-      plq2g_about <- plq2g_about %>% anti_join(custom_stop_words)
-      plq2g_about2 <- plq2g_df %>% unnest_tokens(word,plq2g, token = "ngrams", n= 2) 
-      plq2g_about2 <- plq2g_about2 %>% anti_join(custom_stop_words)
-      plq2g_about3 <- plq2g_df %>% unnest_tokens(word,plq2g, token = "ngrams", n= 3)
-      plq2g_about3 <- plq2g_about3 %>% anti_join(custom_stop_words)
-      qt_about <- qt_df %>% unnest_tokens(word,qt) 
-      qt_about <- qt_about %>% anti_join(custom_stop_words)
-      qt_about2 <- qt_df %>% unnest_tokens(word,qt, token = "ngrams", n= 2) 
-      qt_about2 <- qt_about2 %>% anti_join(custom_stop_words)
-      qt_about3 <- qt_df %>% unnest_tokens(word,qt, token = "ngrams", n= 3)
-      qt_about3 <- qt_about3 %>% anti_join(custom_stop_words)
-      tc_about <- tc_df %>% unnest_tokens(word,tc) 
-      tc_about <- tc_about %>% anti_join(custom_stop_words)
-      tc_about2 <- tc_df %>% unnest_tokens(word,tc, token = "ngrams", n= 2) 
-      tc_about2 <- tc_about2 %>% anti_join(custom_stop_words)
-      tc_about3 <- tc_df %>% unnest_tokens(word,tc, token = "ngrams", n= 3)
-      tc_about3 <- tc_about3 %>% anti_join(custom_stop_words)
+    #Create grams
+          mtt_about <- mtt_df %>% unnest_tokens(word,mtt) 
+          mtt_about <- mtt_about %>% anti_join(custom_stop_words)
+          mtt_about2 <- mtt_df %>% unnest_tokens(word,mtt, token = "ngrams", n= 2) 
+          mtt_about2 <- mtt_about2 %>% anti_join(custom_stop_words)
+          mtt_about3 <- mtt_df %>% unnest_tokens(word,mtt, token = "ngrams", n= 3)
+          mtt_about3 <- mtt_about3 %>% anti_join(custom_stop_words)
+          plq2g_about <- plq2g_df %>% unnest_tokens(word,plq2g) 
+          plq2g_about <- plq2g_about %>% anti_join(custom_stop_words)
+          plq2g_about2 <- plq2g_df %>% unnest_tokens(word,plq2g, token = "ngrams", n= 2) 
+          plq2g_about2 <- plq2g_about2 %>% anti_join(custom_stop_words)
+          plq2g_about3 <- plq2g_df %>% unnest_tokens(word,plq2g, token = "ngrams", n= 3)
+          plq2g_about3 <- plq2g_about3 %>% anti_join(custom_stop_words)
+          qt_about <- qt_df %>% unnest_tokens(word,qt) 
+          qt_about <- qt_about %>% anti_join(custom_stop_words)
+          qt_about2 <- qt_df %>% unnest_tokens(word,qt, token = "ngrams", n= 2) 
+          qt_about2 <- qt_about2 %>% anti_join(custom_stop_words)
+          qt_about3 <- qt_df %>% unnest_tokens(word,qt, token = "ngrams", n= 3)
+          qt_about3 <- qt_about3 %>% anti_join(custom_stop_words)
+          tc_about <- tc_df %>% unnest_tokens(word,tc) 
+          tc_about <- tc_about %>% anti_join(custom_stop_words)
+          tc_about2 <- tc_df %>% unnest_tokens(word,tc, token = "ngrams", n= 2) 
+          tc_about2 <- tc_about2 %>% anti_join(custom_stop_words)
+          tc_about3 <- tc_df %>% unnest_tokens(word,tc, token = "ngrams", n= 3)
+          tc_about3 <- tc_about3 %>% anti_join(custom_stop_words)
 
-    # read in the files and combine the data to make unigrams
-      mtt_reviews <- map(file_paths_mtt, read_file) %>% 
-        reduce(c) %>% 
-        tibble(text = .) %>% 
-        unnest_tokens(word, text)
-      plq2g_reviews <- map(file_paths_plq2g, read_file) %>% 
-        reduce(c) %>% 
-        tibble(text = .) %>% 
-        unnest_tokens(word, text)
-      qt_reviews <- map(file_paths_qt, read_file) %>% 
-        reduce(c) %>% 
-        tibble(text = .) %>% 
-        unnest_tokens(word, text)
-      tc_reviews <- map(file_paths_tc, read_file) %>% 
-        reduce(c) %>% 
-        tibble(text = .) %>% 
-        unnest_tokens(word, text)
+    #read in the files and combine the data to make unigrams
+          mtt_reviews <- map(file_paths_mtt, read_file) %>% 
+            reduce(c) %>% 
+            tibble(text = .) %>% 
+            unnest_tokens(word, text)
+          plq2g_reviews <- map(file_paths_plq2g, read_file) %>% 
+            reduce(c) %>% 
+            tibble(text = .) %>% 
+            unnest_tokens(word, text)
+          qt_reviews <- map(file_paths_qt, read_file) %>% 
+            reduce(c) %>% 
+            tibble(text = .) %>% 
+            unnest_tokens(word, text)
+          tc_reviews <- map(file_paths_tc, read_file) %>% 
+            reduce(c) %>% 
+            tibble(text = .) %>% 
+            unnest_tokens(word, text)
         
-    # read in the files and combine the data to make bigrams
-      mtt_reviews2 <- map(file_paths_mtt, read_file) %>% 
-       reduce(c) %>% 
-       tibble(text = .) %>% 
-       unnest_tokens(word, text, token = "ngrams", n= 2)
-      plq2g_reviews2 <- map(file_paths_plq2g, read_file) %>% 
-        reduce(c) %>% 
-        tibble(text = .) %>% 
-        unnest_tokens(word, text, token = "ngrams", n= 2)
-      qt_reviews2 <- map(file_paths_qt, read_file) %>% 
-        reduce(c) %>% 
-        tibble(text = .) %>% 
-        unnest_tokens(word, text, token = "ngrams", n= 2)
-      tc_reviews2 <- map(file_paths_tc, read_file) %>% 
-        reduce(c) %>% 
-        tibble(text = .) %>% 
-        unnest_tokens(word, text, token = "ngrams", n= 2)
+      #read in the files and combine the data to make bigrams
+          mtt_reviews2 <- map(file_paths_mtt, read_file) %>% 
+           reduce(c) %>% 
+           tibble(text = .) %>% 
+           unnest_tokens(word, text, token = "ngrams", n= 2)
+          plq2g_reviews2 <- map(file_paths_plq2g, read_file) %>% 
+            reduce(c) %>% 
+            tibble(text = .) %>% 
+            unnest_tokens(word, text, token = "ngrams", n= 2)
+          qt_reviews2 <- map(file_paths_qt, read_file) %>% 
+            reduce(c) %>% 
+            tibble(text = .) %>% 
+            unnest_tokens(word, text, token = "ngrams", n= 2)
+          tc_reviews2 <- map(file_paths_tc, read_file) %>% 
+            reduce(c) %>% 
+            tibble(text = .) %>% 
+            unnest_tokens(word, text, token = "ngrams", n= 2)
 
-   # read in the files and combine the data to make trigrams
-      mtt_reviews3 <- map(file_paths_mtt, read_file) %>% 
-        reduce(c) %>% 
-        tibble(text = .) %>% 
-        unnest_tokens(word, text, token = "ngrams", n= 3)
-      plq2g_reviews3 <- map(file_paths_plq2g, read_file) %>% 
-        reduce(c) %>% 
-        tibble(text = .) %>% 
-        unnest_tokens(word, text, token = "ngrams", n= 3)
-      qt_reviews3 <- map(file_paths_qt, read_file) %>% 
-        reduce(c) %>% 
-        tibble(text = .) %>% 
-        unnest_tokens(word, text, token = "ngrams", n= 3)
-      tc_reviews3 <- map(file_paths_tc, read_file) %>% 
-        reduce(c) %>% 
-        tibble(text = .) %>% 
-        unnest_tokens(word, text, token = "ngrams", n= 3)
+      #read in the files and combine the data to make trigrams
+          mtt_reviews3 <- map(file_paths_mtt, read_file) %>% 
+            reduce(c) %>% 
+            tibble(text = .) %>% 
+            unnest_tokens(word, text, token = "ngrams", n= 3)
+          plq2g_reviews3 <- map(file_paths_plq2g, read_file) %>% 
+            reduce(c) %>% 
+            tibble(text = .) %>% 
+            unnest_tokens(word, text, token = "ngrams", n= 3)
+          qt_reviews3 <- map(file_paths_qt, read_file) %>% 
+            reduce(c) %>% 
+            tibble(text = .) %>% 
+            unnest_tokens(word, text, token = "ngrams", n= 3)
+          tc_reviews3 <- map(file_paths_tc, read_file) %>% 
+            reduce(c) %>% 
+            tibble(text = .) %>% 
+            unnest_tokens(word, text, token = "ngrams", n= 3)
 
-    #removing all stop words
-      mtt_reviews <- mtt_reviews %>% anti_join(custom_stop_words)
-      mtt_reviews2 <- mtt_reviews2 %>% anti_join(custom_stop_words)
-      mtt_reviews3 <- mtt_reviews3 %>% anti_join(custom_stop_words)
-      plq2g_reviews <- plq2g_reviews %>% anti_join(custom_stop_words)
-      plq2g_reviews2 <- plq2g_reviews2 %>% anti_join(custom_stop_words)
-      plq2g_reviews3 <- plq2g_reviews3 %>% anti_join(custom_stop_words)
-      qt_reviews <- qt_reviews %>% anti_join(custom_stop_words)
-      qt_reviews2 <- qt_reviews2 %>% anti_join(custom_stop_words)
-      qt_reviews3 <- qt_reviews3 %>% anti_join(custom_stop_words)
-      tc_reviews <- tc_reviews %>% anti_join(custom_stop_words)
-      tc_reviews2 <- tc_reviews2 %>% anti_join(custom_stop_words)
-      tc_reviews3 <- tc_reviews3 %>% anti_join(custom_stop_words)
+      #removing all stop words
+          mtt_reviews <- mtt_reviews %>% anti_join(custom_stop_words)
+          mtt_reviews2 <- mtt_reviews2 %>% anti_join(custom_stop_words)
+          mtt_reviews3 <- mtt_reviews3 %>% anti_join(custom_stop_words)
+          plq2g_reviews <- plq2g_reviews %>% anti_join(custom_stop_words)
+          plq2g_reviews2 <- plq2g_reviews2 %>% anti_join(custom_stop_words)
+          plq2g_reviews3 <- plq2g_reviews3 %>% anti_join(custom_stop_words)
+          qt_reviews <- qt_reviews %>% anti_join(custom_stop_words)
+          qt_reviews2 <- qt_reviews2 %>% anti_join(custom_stop_words)
+          qt_reviews3 <- qt_reviews3 %>% anti_join(custom_stop_words)
+          tc_reviews <- tc_reviews %>% anti_join(custom_stop_words)
+          tc_reviews2 <- tc_reviews2 %>% anti_join(custom_stop_words)
+          tc_reviews3 <- tc_reviews3 %>% anti_join(custom_stop_words)
       
 
 ###Output Data###
+
+
+    #term matrices
+      # Create a term document matrix of unigrams 
+          mycorpus <- Corpus(VectorSource(c(mtt_about, plq2g_about, qt_about, tc_about, mtt_reviews, plq2g_reviews, qt_reviews, tc_reviews)))
+          mytokenizer <- function(x) 
+          {
+            unlist(lapply(ngrams(words(x), 1), paste, collapse = " "), use.names = FALSE)
+          }
+          mycorpus <- tm_map(mycorpus, removePunctuation)
+          #mycorpus <- tm_map(mycorpus, removeWords, stopwords("english"))
+          mycorpus <- tm_map(mycorpus, stripWhitespace) 
+          tdm <- TermDocumentMatrix(mycorpus, control = list(tokenize = mytokenizer))
+          tdm_matrix <- as.matrix(tdm)
+          tdm_matrix
+ 
+     # # Create a term document matrix of bigrams
+     #      mycorpus2 <- Corpus(VectorSource(c(mtt_about, plq2g_about, qt_about, tc_about, mtt_reviews, plq2g_reviews, qt_reviews, tc_reviews)))
+     #      mytokenizer2 <- function(x) 
+     #      {
+     #        unlist(lapply(ngrams(words(x), 2), paste, collapse = " "))
+     #      }
+     # 
+     #      #mycorpus2 <- tm_map(mycorpus2, removePunctuation)
+     #      #mycorpus2 <- tm_map(mycorpus2, removeWords, stopwords("english"))
+     #      tdm2 <- DocumentTermMatrix(mycorpus2, control = list(tokenize = mytokenizer2))
+     #      tdm_matrix2 <- as.matrix(tdm2)
+     #      tdm_matrix2
+     #      
+     #  
+     # # Create a term document matrix of trigrams 
+     #      mycorpus3 <- Corpus(VectorSource(c(mtt_about3, plq2g_about3, qt_about3, tc_about3, mtt_reviews3, plq2g_reviews3, qt_reviews3, tc_reviews3 )))
+     #      mytokenizer3 <- function(x) 
+     #      {
+     #        unlist(lapply(ngrams(words(x), 3), paste, collapse = " "), use.names = FALSE)
+     #      }
+     #      #mycorpus3 <- tm_map(mycorpus3, removePunctuation)
+     #      #mycorpus3 <- tm_map(mycorpus3, removeWords, stopwords("english"))
+     #      tdm3 <- TermDocumentMatrix(mycorpus3, control = list(tokenize = mytokenizer3))
+     #      tdm_matrix3 <- as.matrix(tdm3)
+     #      tdm_matrix3
+
+
+     # write the combined data frame to a CSV file
+          write_csv(mtt_about, output_file01)
+          write_csv(mtt_about2, output_file02)
+          write_csv(mtt_about3, output_file03)
+          write_csv(mtt_reviews, output_file04)
+          write_csv(mtt_reviews2, output_file05)
+          write_csv(mtt_reviews3, output_file06)
+          write_csv(plq2g_about, output_file07)
+          write_csv(plq2g_about2, output_file08)
+          write_csv(plq2g_about3, output_file09)
+          write_csv(plq2g_reviews, output_file10)
+          write_csv(plq2g_reviews2, output_file11)
+          write_csv(plq2g_reviews3, output_file12)
+          write_csv(qt_about, output_file13)
+          write_csv(qt_about2, output_file14)
+          write_csv(qt_about3, output_file15)
+          write_csv(qt_reviews, output_file16)
+          write_csv(qt_reviews2, output_file17)
+          write_csv(qt_reviews3, output_file18)
+          write_csv(tc_about, output_file19)
+          write_csv(tc_about2, output_file20)
+          write_csv(tc_about3, output_file21)
+          write_csv(tc_reviews, output_file22)
+          write_csv(tc_reviews2, output_file23)
+          write_csv(tc_reviews3, output_file24)
+          write_csv(custom_stop_words, output_file_sw)
+          write.csv(as.matrix(tdm_matrix), file = output_file_tdm_unigrams)
+          #write.csv(as.matrix(tdm_matrix2), file = output_file_tdm_bigrams)
+          #write.csv(as.matrix(tdm_matrix3), file = output_file_tdm_trigrams)
+    
     #word count
-      mtt_about <- mtt_about %>% count(word, sort = TRUE) 
-      mtt_about2 <-mtt_about2 %>% count(word, sort = TRUE) 
-      mtt_about3 <-mtt_about3 %>% count(word, sort = TRUE) 
-      mtt_reviews <- mtt_reviews %>% count(word, sort = TRUE) 
-      mtt_reviews2 <- mtt_reviews2 %>% count(word, sort = TRUE) 
-      mtt_reviews3 <- mtt_reviews3 %>% count(word, sort = TRUE) 
-      plq2g_about <- plq2g_about %>% count(word, sort = TRUE) 
-      plq2g_about2 <-plq2g_about2 %>% count(word, sort = TRUE) 
-      plq2g_about3 <-plq2g_about3 %>% count(word, sort = TRUE) 
-      plq2g_reviews <- plq2g_reviews %>% count(word, sort = TRUE) 
-      plq2g_reviews2 <- plq2g_reviews2 %>% count(word, sort = TRUE) 
-      plq2g_reviews3 <- plq2g_reviews3 %>% count(word, sort = TRUE) 
-      qt_about <- qt_about %>% count(word, sort = TRUE) 
-      qt_about2 <-qt_about2 %>% count(word, sort = TRUE) 
-      qt_about3 <-qt_about3 %>% count(word, sort = TRUE) 
-      qt_reviews <- qt_reviews %>% count(word, sort = TRUE) 
-      qt_reviews2 <- qt_reviews2 %>% count(word, sort = TRUE) 
-      qt_reviews3 <- qt_reviews3 %>% count(word, sort = TRUE) 
-      tc_about <- tc_about %>% count(word, sort = TRUE) 
-      tc_about2 <-tc_about2 %>% count(word, sort = TRUE) 
-      tc_about3 <-tc_about3 %>% count(word, sort = TRUE) 
-      tc_reviews <- tc_reviews %>% count(word, sort = TRUE) 
-      tc_reviews2 <- tc_reviews2 %>% count(word, sort = TRUE) 
-      tc_reviews3 <- tc_reviews3 %>% count(word, sort = TRUE) 
+          mtt_about <- mtt_about %>% count(word, sort = TRUE)
+          mtt_about2 <-mtt_about2 %>% count(word, sort = TRUE)
+          mtt_about3 <-mtt_about3 %>% count(word, sort = TRUE)
+          mtt_reviews <- mtt_reviews %>% count(word, sort = TRUE)
+          mtt_reviews2 <- mtt_reviews2 %>% count(word, sort = TRUE)
+          mtt_reviews3 <- mtt_reviews3 %>% count(word, sort = TRUE)
+          plq2g_about <- plq2g_about %>% count(word, sort = TRUE)
+          plq2g_about2 <-plq2g_about2 %>% count(word, sort = TRUE)
+          plq2g_about3 <-plq2g_about3 %>% count(word, sort = TRUE)
+          plq2g_reviews <- plq2g_reviews %>% count(word, sort = TRUE)
+          plq2g_reviews2 <- plq2g_reviews2 %>% count(word, sort = TRUE)
+          plq2g_reviews3 <- plq2g_reviews3 %>% count(word, sort = TRUE)
+          qt_about <- qt_about %>% count(word, sort = TRUE)
+          qt_about2 <-qt_about2 %>% count(word, sort = TRUE)
+          qt_about3 <-qt_about3 %>% count(word, sort = TRUE)
+          qt_reviews <- qt_reviews %>% count(word, sort = TRUE)
+          qt_reviews2 <- qt_reviews2 %>% count(word, sort = TRUE)
+          qt_reviews3 <- qt_reviews3 %>% count(word, sort = TRUE)
+          tc_about <- tc_about %>% count(word, sort = TRUE)
+          tc_about2 <-tc_about2 %>% count(word, sort = TRUE)
+          tc_about3 <-tc_about3 %>% count(word, sort = TRUE)
+          tc_reviews <- tc_reviews %>% count(word, sort = TRUE)
+          tc_reviews2 <- tc_reviews2 %>% count(word, sort = TRUE)
+          tc_reviews3 <- tc_reviews3 %>% count(word, sort = TRUE)
       
-      
-
-   # write the combined data frame to a CSV file
-      write_csv(mtt_about, output_file01)
-      write_csv(mtt_about2, output_file02)
-      write_csv(mtt_about3, output_file03)
-      write_csv(mtt_reviews, output_file04)
-      write_csv(mtt_reviews2, output_file05)
-      write_csv(mtt_reviews3, output_file06)
-      write_csv(plq2g_about, output_file07)
-      write_csv(plq2g_about2, output_file08)
-      write_csv(plq2g_about3, output_file09)
-      write_csv(plq2g_reviews, output_file10)
-      write_csv(plq2g_reviews2, output_file11)
-      write_csv(plq2g_reviews3, output_file12)
-      write_csv(qt_about, output_file13)
-      write_csv(qt_about2, output_file14)
-      write_csv(qt_about3, output_file15)
-      write_csv(qt_reviews, output_file16)
-      write_csv(qt_reviews2, output_file17)
-      write_csv(qt_reviews3, output_file18)
-      write_csv(tc_about, output_file19)
-      write_csv(tc_about2, output_file20)
-      write_csv(tc_about3, output_file21)
-      write_csv(tc_reviews, output_file22)
-      write_csv(tc_reviews2, output_file23)
-      write_csv(tc_reviews3, output_file24)
-
-   # frequency matrices
-      freq_matrix <- table(mtt_about$word, mtt_about$n)
-      print(freq_matrix)
-      freq_matrix <- table(mtt_about2$word, mtt_about2$n)
-      print(freq_matrix)
-      freq_matrix <- table(mtt_about3$word, mtt_about3$n)
-      print(freq_matrix)
-      freq_matrix <- table(mtt_reviews$word, mtt_reviews$n)
-      print(freq_matrix)
-      freq_matrix <- table(mtt_reviews2$word, mtt_reviews2$n)
-      print(freq_matrix)
-      freq_matrix <- table(mtt_reviews3$word, mtt_reviews3$n)
-      print(freq_matrix)
-      freq_matrix <- table(plq2g_about$word, plq2g_about$n)
-      print(freq_matrix)
-      freq_matrix <- table(plq2g_about2$word, plq2g_about2$n)
-      print(freq_matrix)
-      freq_matrix <- table(plq2g_about3$word, plq2g_about3$n)
-      print(freq_matrix)
-      freq_matrix <- table(plq2g_reviews$word, plq2g_reviews$n)
-      print(freq_matrix)
-      freq_matrix <- table(plq2g_reviews2$word, plq2g_reviews2$n)
-      print(freq_matrix)
-      freq_matrix <- table(plq2g_reviews3$word, plq2g_reviews3$n)
-      print(freq_matrix)
-      freq_matrix <- table(qt_about$word, qt_about$n)
-      print(freq_matrix)
-      freq_matrix <- table(qt_about2$word, qt_about2$n)
-      print(freq_matrix)
-      freq_matrix <- table(qt_about3$word, qt_about3$n)
-      print(freq_matrix)
-      freq_matrix <- table(qt_reviews$word, qt_reviews$n)
-      print(freq_matrix)
-      freq_matrix <- table(qt_reviews2$word, qt_reviews2$n)
-      print(freq_matrix)
-      freq_matrix <- table(qt_reviews3$word, qt_reviews3$n)
-      print(freq_matrix)
-      freq_matrix <- table(tc_about$word, tc_about$n)
-      print(freq_matrix)
-      freq_matrix <- table(tc_about2$word, tc_about2$n)
-      print(freq_matrix)
-      freq_matrix <- table(tc_about3$word, tc_about3$n)
-      print(freq_matrix)
-      freq_matrix <- table(tc_reviews$word, tc_reviews$n)
-      print(freq_matrix)
-      freq_matrix <- table(tc_reviews2$word, tc_reviews2$n)
-      print(freq_matrix)
-      freq_matrix <- table(tc_reviews3$word, tc_reviews3$n)
-      print(freq_matrix)
+    #frequency matrices
+          freq_matrix <- table(mtt_about$word, mtt_about$n)
+          print(freq_matrix)
+          freq_matrix <- table(mtt_about2$word, mtt_about2$n)
+          print(freq_matrix)
+          freq_matrix <- table(mtt_about3$word, mtt_about3$n)
+          print(freq_matrix)
+          freq_matrix <- table(mtt_reviews$word, mtt_reviews$n)
+          print(freq_matrix)
+          freq_matrix <- table(mtt_reviews2$word, mtt_reviews2$n)
+          print(freq_matrix)
+          freq_matrix <- table(mtt_reviews3$word, mtt_reviews3$n)
+          print(freq_matrix)
+          freq_matrix <- table(plq2g_about$word, plq2g_about$n)
+          print(freq_matrix)
+          freq_matrix <- table(plq2g_about2$word, plq2g_about2$n)
+          print(freq_matrix)
+          freq_matrix <- table(plq2g_about3$word, plq2g_about3$n)
+          print(freq_matrix)
+          freq_matrix <- table(plq2g_reviews$word, plq2g_reviews$n)
+          print(freq_matrix)
+          freq_matrix <- table(plq2g_reviews2$word, plq2g_reviews2$n)
+          print(freq_matrix)
+          freq_matrix <- table(plq2g_reviews3$word, plq2g_reviews3$n)
+          print(freq_matrix)
+          freq_matrix <- table(qt_about$word, qt_about$n)
+          print(freq_matrix)
+          freq_matrix <- table(qt_about2$word, qt_about2$n)
+          print(freq_matrix)
+          freq_matrix <- table(qt_about3$word, qt_about3$n)
+          print(freq_matrix)
+          freq_matrix <- table(qt_reviews$word, qt_reviews$n)
+          print(freq_matrix)
+          freq_matrix <- table(qt_reviews2$word, qt_reviews2$n)
+          print(freq_matrix)
+          freq_matrix <- table(qt_reviews3$word, qt_reviews3$n)
+          print(freq_matrix)
+          freq_matrix <- table(tc_about$word, tc_about$n)
+          print(freq_matrix)
+          freq_matrix <- table(tc_about2$word, tc_about2$n)
+          print(freq_matrix)
+          freq_matrix <- table(tc_about3$word, tc_about3$n)
+          print(freq_matrix)
+          freq_matrix <- table(tc_reviews$word, tc_reviews$n)
+          print(freq_matrix)
+          freq_matrix <- table(tc_reviews2$word, tc_reviews2$n)
+          print(freq_matrix)
+          freq_matrix <- table(tc_reviews3$word, tc_reviews3$n)
+          print(freq_matrix)
 
 
-###Create Graphs###
+###Visualizations###
     # #frequency graph
     #   mtt_about %>%
     #     count(word, sort = TRUE) %>%
@@ -456,9 +509,9 @@
     #     geom_col() +
     #     labs(y = NULL)
       
-#Test Area
+
       
-      
+  #Frequency calc      
       frequency <- bind_rows(mutate(tc_about, product = "MyTalkTools"),
                              mutate(qt_about, product = "QuickTalk"), 
                              mutate(mtt_about, product = "TouchChat"),
@@ -471,9 +524,6 @@
         pivot_wider(names_from = product, values_from = proportion) %>%
         pivot_longer(`TouchChat`:`QuickTalk`:`MyTalkTools`:`Proloquo2go`,
                      names_to = "product", values_to = "proportion")
-      
-      print(frequency)      
-      write_csv(frequency, output_file_test)
       
   # #Scatterplots      
   #     # expect a warning about rows with missing values being removed
@@ -490,37 +540,156 @@
   #       theme(legend.position="none") +
   #       labs(y = "MyTalkTools", x = NULL)
 
-  #WordClouds      
-      set.seed(1234) # for reproducibility 
+    #WordClouds
+      set.seed(1234) # for reproducibility
 
-      wordcloud2(data=mtt_about, size=0.5, color='random-dark')
-      wordcloud2(data=mtt_about2, size=0.5, color='random-dark')
-      wordcloud2(data=mtt_about3, size=0.5, color='random-dark')
-      wordcloud2(data=mtt_reviews, size=0.5, color='random-dark')
-      wordcloud2(data=mtt_reviews2, size=0.5, color='random-dark')
-      wordcloud2(data=mtt_reviews3, size=0.5, color='random-dark')
-      wordcloud2(data=plq2g_about, size=0.5, color='random-dark')
-      wordcloud2(data=plq2g_about2, size=0.5, color='random-dark')
-      wordcloud2(data=plq2g_about3, size=0.5, color='random-dark')
-      wordcloud2(data=plq2g_reviews, size=0.5, color='random-dark')
-      wordcloud2(data=plq2g_reviews2, size=0.5, color='random-dark')
-      wordcloud2(data=plq2g_reviews3, size=0.5, color='random-dark')
-      wordcloud2(data=qt_about, size=0.5, color='random-dark')
-      wordcloud2(data=qt_about2, size=0.5, color='random-dark')
-      wordcloud2(data=qt_about3, size=0.5, color='random-dark')
-      wordcloud2(data=qt_reviews, size=0.5, color='random-dark')
-      wordcloud2(data=qt_reviews2, size=0.5, color='random-dark')
-      wordcloud2(data=qt_reviews3, size=0.5, color='random-dark')
-      wordcloud2(data=tc_about, size=0.5, color='random-dark')
-      wordcloud2(data=tc_about2, size=0.5, color='random-dark')
-      wordcloud2(data=tc_about3, size=0.5, color='random-dark')
-      wordcloud2(data=tc_reviews, size=0.5, color='random-dark')
-      wordcloud2(data=tc_reviews2, size=0.5, color='random-dark')
-      wordcloud2(data=tc_reviews3, size=0.5, color='random-dark')
+
+      my_graph <- wordcloud2(mtt_about, size=1.0)
+      saveWidget(my_graph,"data/tmp.html",selfcontained = F)
+      webshot("data/tmp.html","data/WordClouds/mtt_about.png", delay =2, vwidth = 1200, vheight=1200)
+      file.remove("data/tmp.html")
+      unlink("data/tmp_files", recursive = TRUE)
+
+      my_graph <- wordcloud2(mtt_about2, size=1.0)
+      saveWidget(my_graph,"data/tmp2.html",selfcontained = F)
+      webshot("data/tmp2.html","data/WordClouds/mtt_about2.png", delay =2, vwidth = 1200, vheight=1200)
+      file.remove("data/tmp2.html")
+      unlink("data/tmp2_files", recursive = TRUE)
+
+      my_graph <- wordcloud2(mtt_about3, size=1.0)
+      saveWidget(my_graph,"data/tmp3.html",selfcontained = F)
+      webshot("data/tmp3.html","data/WordClouds/mtt_about3.png", delay =2, vwidth = 1200, vheight=1200)
+      file.remove("data/tmp3.html")
+      unlink("data/tmp3_files", recursive = TRUE)
+
+      my_graph <- wordcloud2(mtt_reviews, size=1.0)
+      saveWidget(my_graph,"data/tmp4.html",selfcontained = F)
+      webshot("data/tmp4.html","data/WordClouds/mtt_reviews.png", delay =2, vwidth = 1200, vheight=1200)
+      file.remove("data/tmp4.html")
+      unlink("data/tmp4_files", recursive = TRUE)
+
+      my_graph <- wordcloud2(mtt_reviews2, size=1.0)
+      saveWidget(my_graph,"data/tmp5.html",selfcontained = F)
+      webshot("data/tmp5.html","data/WordClouds/mtt_reviews2.png", delay =2, vwidth = 1200, vheight=1200)
+      file.remove("data/tmp5.html")
+      unlink("data/tmp5_files", recursive = TRUE)
+
+      my_graph <- wordcloud2(mtt_reviews3, size=1.0)
+      saveWidget(my_graph,"data/tmp6.html",selfcontained = F)
+      webshot("data/tmp6.html","data/WordClouds/mtt_reviews3.png", delay =2, vwidth = 1200, vheight=1200)
+      file.remove("data/tmp6.html")
+      unlink("data/tmp6_files", recursive = TRUE)
+
+      my_graph <- wordcloud2(plq2g_about, size=1.0)
+      saveWidget(my_graph,"data/tmp7.html",selfcontained = F)
+      webshot("data/tmp7.html","data/WordClouds/plq2g_about.png", delay =2, vwidth = 1200, vheight=1200)
+      file.remove("data/tmp7.html")
+      unlink("data/tmp7_files", recursive = TRUE)
+
+      my_graph <- wordcloud2(plq2g_about2, size=1.0)
+      saveWidget(my_graph,"data/tmp8.html",selfcontained = F)
+      webshot("data/tmp8.html","data/WordClouds/plq2g_about2.png", delay =2, vwidth = 1200, vheight=1200)
+      file.remove("data/tmp8.html")
+      unlink("data/tmp8_files", recursive = TRUE)
+
+      my_graph <- wordcloud2(plq2g_about3, size=1.0)
+      saveWidget(my_graph,"data/tmp9.html",selfcontained = F)
+      webshot("data/tmp9.html","data/WordClouds/plq2g_about3.png", delay =2, vwidth = 1200, vheight=1200)
+      file.remove("data/tmp9.html")
+      unlink("data/tmp9_files", recursive = TRUE)
+
+      my_graph <- wordcloud2(plq2g_reviews, size=1.0)
+      saveWidget(my_graph,"data/tmp10.html",selfcontained = F)
+      webshot("data/tmp10.html","data/WordClouds/plq2g_reviews.png", delay =2, vwidth = 1200, vheight=1200)
+      file.remove("data/tmp10.html")
+      unlink("data/tmp10_files", recursive = TRUE)
+
+      my_graph <- wordcloud2(plq2g_reviews2, size=1.0)
+      saveWidget(my_graph,"data/tmp11.html",selfcontained = F)
+      webshot("data/tmp11.html","data/WordClouds/plq2g_reviews2.png", delay =2, vwidth = 1200, vheight=1200)
+      file.remove("data/tmp11.html")
+      unlink("data/tmp11_files", recursive = TRUE)
+
+      my_graph <- wordcloud2(plq2g_reviews3, size=1.0)
+      saveWidget(my_graph,"data/tmp12.html",selfcontained = F)
+      webshot("data/tmp12.html","data/WordClouds/plq2g_reviews3.png", delay =2, vwidth = 1200, vheight=1200)
+      file.remove("data/tmp12.html")
+      unlink("data/tmp12_files", recursive = TRUE)
+
+      my_graph <- wordcloud2(qt_about, size=1.0)
+      saveWidget(my_graph,"data/tmp13.html",selfcontained = F)
+      webshot("data/tmp13.html","data/WordClouds/qt_about.png", delay =2, vwidth = 1200, vheight=1200)
+      file.remove("data/tmp13.html")
+      unlink("data/tmp13_files", recursive = TRUE)
+
+      my_graph <- wordcloud2(qt_about2, size=1.0)
+      saveWidget(my_graph,"data/tmp14.html",selfcontained = F)
+      webshot("data/tmp14.html","data/WordClouds/qt_about2.png", delay =2, vwidth = 1200, vheight=1200)
+      file.remove("data/tmp14.html")
+      unlink("data/tmp14_files", recursive = TRUE)
+
+      my_graph <- wordcloud2(qt_about3, size=1.0)
+      saveWidget(my_graph,"data/tmp15.html",selfcontained = F)
+      webshot("data/tmp15.html","data/WordClouds/qt_about3.png", delay =2, vwidth = 1200, vheight=1200)
+      file.remove("data/tmp15.html")
+      unlink("data/tmp15_files", recursive = TRUE)
+
+      my_graph <- wordcloud2(qt_reviews, size=1.0)
+      saveWidget(my_graph,"data/tmp16.html",selfcontained = F)
+      webshot("data/tmp16.html","data/WordClouds/qt_reviews.png", delay =2, vwidth = 1200, vheight=1200)
+      file.remove("data/tmp16.html")
+      unlink("data/tmp16_files", recursive = TRUE)
+
+      my_graph <- wordcloud2(qt_reviews2, size=1.0)
+      saveWidget(my_graph,"data/tmp17.html",selfcontained = F)
+      webshot("data/tmp17.html","data/WordClouds/qt_reviews2.png", delay =2, vwidth = 1200, vheight=1200)
+      file.remove("data/tmp17.html")
+      unlink("data/tmp17_files", recursive = TRUE)
+
+      my_graph <- wordcloud2(qt_reviews3, size=1.0)
+      saveWidget(my_graph,"data/tmp18.html",selfcontained = F)
+      webshot("data/tmp18.html","data/WordClouds/qt_reviews3.png", delay =2, vwidth = 1200, vheight=1200)
+      file.remove("data/tmp18.html")
+      unlink("data/tmp18_files", recursive = TRUE)
+
+      my_graph <- wordcloud2(tc_about, size=1.0)
+      saveWidget(my_graph,"data/tmp19.html",selfcontained = F)
+      webshot("data/tmp19.html","data/WordClouds/tc_about.png", delay =2, vwidth = 1200, vheight=1200)
+      file.remove("data/tmp19.html")
+      unlink("data/tmp19_files", recursive = TRUE)
+
+      my_graph <- wordcloud2(tc_about2, size=1.0)
+      saveWidget(my_graph,"data/tmp20.html",selfcontained = F)
+      webshot("data/tmp20.html","data/WordClouds/tc_about2.png", delay =2, vwidth = 1200, vheight=1200)
+      file.remove("data/tmp20.html")
+      unlink("data/tmp20_files", recursive = TRUE)
+
+      my_graph <- wordcloud2(tc_about3, size=1.0)
+      saveWidget(my_graph,"data/tmp21.html",selfcontained = F)
+      webshot("data/tmp21.html","data/WordClouds/tc_about3.png", delay =2, vwidth = 1200, vheight=1200)
+      file.remove("data/tmp21.html")
+      unlink("data/tmp21_files", recursive = TRUE)
+
+      my_graph <- wordcloud2(tc_reviews, size=1.0)
+      saveWidget(my_graph,"data/tmp22.html",selfcontained = F)
+      webshot("data/tmp22.html","data/WordClouds/tc_reviews.png", delay =2, vwidth = 1200, vheight=1200)
+      file.remove("data/tmp22.html")
+      unlink("data/tmp22_files", recursive = TRUE)
+
+      my_graph <- wordcloud2(tc_reviews2, size=1.0)
+      saveWidget(my_graph,"data/tmp23.html",selfcontained = F)
+      webshot("data/tmp23.html","data/WordClouds/tc_reviews2.png", delay =2, vwidth = 1200, vheight=1200)
+      file.remove("data/tmp23.html")
+      unlink("data/tmp23_files", recursive = TRUE)
+
+      my_graph <- wordcloud2(tc_reviews3, size=1.0)
+      saveWidget(my_graph,"data/tmp24.html",selfcontained = F)
+      webshot("data/tmp24.html","data/WordClouds/tc_reviews3.png", delay =2, vwidth = 1200, vheight=1200)
+      file.remove("data/tmp24.html")
+      unlink("data/tmp24_files", recursive = TRUE)
+
+
       
-  # save the word cloud as a PNG file
-      png(file = "my_wordcloud.png", width = 800, height = 600)
-      mtt_about
-      dev.off()
+
       
       
