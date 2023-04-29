@@ -21,14 +21,14 @@
       file_dir_plq2g <- "data/Proloquo2go/reviews/"
       file_dir_qt <- "data/QuickTalk/reviews/"
       file_dir_tc <- "data/TouchChat/reviews/"
-      # file_dir_per <- "data/Personal/"
+      file_dir_per <- "data/Personal/datatext"
     
   # get a list of file names in the directory
       file_paths_mtt <- list.files(file_dir_mtt, full.names = TRUE)
       file_paths_plq2g <- list.files(file_dir_plq2g, full.names = TRUE)
       file_paths_qt <- list.files(file_dir_qt, full.names = TRUE)
       file_paths_tc <- list.files(file_dir_tc, full.names = TRUE)
-      # file_paths_per <- list.files(file_dir_per, full.names = TRUE)
+      file_paths_per <- list.files(file_dir_per, full.names = TRUE)
 
 ###Create files###
     # set the file path for the output file
@@ -56,9 +56,9 @@
       output_file_22 <- "data/TouchChat/tc_reviews_01.csv"
       output_file_23 <- "data/TouchChat/tc_reviews_02.csv"
       output_file_24 <- "data/TouchChat/tc_reviews_03.csv"
-      # output_file_25 <- "data/Personal/per_processed_01.csv"
-      # output_file_26 <- "data/Personal/per_processed_02.csv"
-      # output_file_27 <- "data/Personal/per_processed_03.csv"
+      output_file_25 <- "data/Personal/per_processed_01.csv"
+      output_file_26 <- "data/Personal/per_processed_02.csv"
+      output_file_27 <- "data/Personal/per_processed_03.csv"
       #output_file__test <- "data/about_Test.csv"
       output_file_sw <- "data/our_stop_words.csv"
       output_file_tdm_unigrams <- "data/tdm_unigram.csv"
@@ -141,10 +141,10 @@
             reduce(c) %>% 
             tibble(text = .) %>% 
             unnest_tokens(word, text)
-          # per_text_01 <- map(file_paths_per, read_file) %>%
-          #   reduce(c) %>%
-          #   tibble(text = .) %>%
-          #   unnest_tokens(word, text)
+          per_text_01 <- map(file_paths_per, read_file)  %>%
+            reduce(c)  %>%
+            tibble(text = .)  %>%
+            unnest_tokens(word, text)
         
       #read in the files and combine the data to make bigrams
           mtt_reviews_02 <- map(file_paths_mtt, read_file) %>% 
@@ -163,10 +163,10 @@
             reduce(c) %>% 
             tibble(text = .) %>% 
             unnest_tokens(word, text, token = "ngrams", n= 2)
-          # per_text_02 <- map(file_paths_per, read_file) %>% 
-          #   reduce(c) %>% 
-          #   tibble(text = .) %>% 
-          #   unnest_tokens(word, text, token = "ngrams", n= 2)
+          per_text_02 <- map(file_paths_per, read_file)   %>% 
+            reduce(c)  %>% 
+            tibble(text = .)  %>% 
+            unnest_tokens(word, text, token = "ngrams", n= 2)
 
       #read in the files and combine the data to make trigrams
           mtt_reviews_03 <- map(file_paths_mtt, read_file) %>% 
@@ -185,10 +185,10 @@
             reduce(c) %>% 
             tibble(text = .) %>% 
             unnest_tokens(word, text, token = "ngrams", n= 3)
-          # per_text_03 <- map(file_paths_per, read_file) %>% 
-          #   reduce(c) %>% 
-          #   tibble(text = .) %>% 
-          #   unnest_tokens(word, text, token = "ngrams", n= 3)
+          per_text_03 <- map(file_paths_per, read_file) %>% 
+            reduce(c) %>% 
+            tibble(text = .) %>% 
+            unnest_tokens(word, text, token = "ngrams", n= 3)
 
       #removing all stop words
           mtt_about_01 <- mtt_about_01 %>% anti_join(custom_stop_words)
@@ -207,14 +207,18 @@
           tc_reviews_01 <- tc_reviews_01 %>% anti_join(custom_stop_words)
           tc_reviews_02 <- tc_reviews_02 %>% anti_join(custom_stop_words)
           tc_reviews_03 <- tc_reviews_03 %>% anti_join(custom_stop_words)
-          # per_text_01 <- per_text_01 %>% anti_join(custom_stop_words)
-          # per_text_02 <- per_text_02 %>% anti_join(custom_stop_words)
-          # per_text_03 <- per_text_03 %>% anti_join(custom_stop_words)
+          per_text_01 <- per_text_01 %>% anti_join(custom_stop_words)
+          per_text_02 <- per_text_02 %>% anti_join(custom_stop_words)
+          per_text_03 <- per_text_03 %>% anti_join(custom_stop_words)
       
 ###Output Data###
     #term matrices
+          my_corpus_01 <- data.frame()
+          my_corpus_02 <- data.frame()
+          my_corpus_03 <- data.frame()
+          
       # Create a term document matrix of unigrams 
-          my_corpus_01 <- VCorpus(VectorSource(c(mtt_about_01, plq2g_about_01, qt_about_01, tc_about_01, mtt_reviews_01, plq2g_reviews_01, qt_reviews_01, tc_reviews_01)))
+          my_corpus_01 <- VCorpus(VectorSource(c(mtt_about_01, plq2g_about_01, qt_about_01, tc_about_01, mtt_reviews_01, plq2g_reviews_01, qt_reviews_01, tc_reviews_01, per_text_01)))
           my_tokenizer_01 <- function(x) 
           {
             unlist(lapply(ngrams(words(x), 1), paste, collapse = " "), use.names = FALSE)
@@ -224,7 +228,7 @@
           #tdm_matrix_01
  
       # Create a term document matrix of bigrams
-          my_corpus_02 <- VCorpus(VectorSource(c(mtt_about_01, plq2g_about_01, qt_about_01, tc_about_01, mtt_reviews_01, plq2g_reviews_01, qt_reviews_01, tc_reviews_01)))
+          my_corpus_02 <- VCorpus(VectorSource(c(mtt_about_01, plq2g_about_01, qt_about_01, tc_about_01, mtt_reviews_01, plq2g_reviews_01, qt_reviews_01, tc_reviews_01, per_text_01)))
           my_tokenizer_02 <- function(x) 
           {
             unlist(lapply(ngrams(words(x), 2), paste, collapse = " "), use.names = FALSE)
@@ -232,10 +236,10 @@
           }
           tdm_02 <- TermDocumentMatrix(my_corpus_02, control = list(tokenize = my_tokenizer_02))
           tdm_matrix_02 <- as.matrix(tdm_02)
-          #tdm_matrix_02
+          tdm_matrix_02
   
       # Create a term document matrix of trigrams 
-           my_corpus_03 <- VCorpus(VectorSource(c(mtt_about_01, plq2g_about_01, qt_about_01, tc_about_01, mtt_reviews_01, plq2g_reviews_01, qt_reviews_01, tc_reviews_01)))
+           my_corpus_03 <- VCorpus(VectorSource(c(mtt_about_01, plq2g_about_01, qt_about_01, tc_about_01, mtt_reviews_01, plq2g_reviews_01, qt_reviews_01, tc_reviews_01, per_text_01)))
            my_tokenizer_03 <- function(x) 
            {
              unlist(lapply(ngrams(words(x), 3), paste, collapse = " "), use.names = FALSE)
@@ -269,9 +273,9 @@
           tc_reviews_01 <- tc_reviews_01 %>% count(word, sort = TRUE)
           tc_reviews_02 <- tc_reviews_02 %>% count(word, sort = TRUE)
           tc_reviews_03 <- tc_reviews_03 %>% count(word, sort = TRUE)
-          # per_text_01 <- per_text_01 %>% count(word, sort = TRUE)
-          # per_text_02 <- per_text_02 %>% count(word, sort = TRUE)
-          # per_text_03 <- per_text_03 %>% count(word, sort = TRUE)
+          per_text_01 <- per_text_01 %>% count(word, sort = TRUE)
+          per_text_02 <- per_text_02 %>% count(word, sort = TRUE)
+          per_text_03 <- per_text_03 %>% count(word, sort = TRUE)
 
      # write the combined data frame to a CSV file
           write_csv(mtt_about_01, output_file_01)
@@ -298,9 +302,9 @@
           write_csv(tc_reviews_01, output_file_22)
           write_csv(tc_reviews_02, output_file_23)
           write_csv(tc_reviews_03, output_file_24)
-          # write_csv(per_text_01, output_file_25)
-          # write.csv(per_text_02, output_file_26)
-          # write.csv(per_text_03, output_file_27)
+          write_csv(per_text_01, output_file_25)
+          write_csv(per_text_02, output_file_26)
+          write_csv(per_text_03, output_file_27)
           write_csv(custom_stop_words, output_file_sw)
           write.csv(as.matrix(tdm_matrix_01), file = output_file_tdm_unigrams)
           write.csv(as.matrix(tdm_matrix_02), file = output_file_tdm_bigrams)
@@ -559,172 +563,172 @@
 #   #       theme(legend.position="none") +
 #   #       labs(y = "MyTalkTools", x = NULL)
 # 
-# #WordClouds
-#         set.seed(1234) # for reproducibility
-# 
-#       
-#         my_graph <- wordcloud2(mtt_about_01, size=3.0)
-#         saveWidget(my_graph,"data/tmp.html",selfcontained = F)
-#         webshot("data/tmp.html","data/WordClouds/mtt_about_01.png", delay =3, vwidth = 1200, vheight=3200)
-#         file.remove("data/tmp.html")
-#         unlink("data/tmp_files", recursive = TRUE)
-#       
-#         my_graph <- wordcloud2(mtt_about_02, size=3.0)
-#         saveWidget(my_graph,"data/tmp2.html",selfcontained = F)
-#         webshot("data/tmp2.html","data/WordClouds/mtt_about_02.png", delay =3, vwidth = 1200, vheight=3200)
-#         file.remove("data/tmp2.html")
-#         unlink("data/tmp2_files", recursive = TRUE)
-#       
-#         my_graph <- wordcloud2(mtt_about_03, size=3.0)
-#         saveWidget(my_graph,"data/tmp3.html",selfcontained = F)
-#         webshot("data/tmp3.html","data/WordClouds/mtt_about_03.png", delay =3, vwidth = 1200, vheight=3200)
-#         file.remove("data/tmp3.html")
-#         unlink("data/tmp3_files", recursive = TRUE)
-#       
-#         my_graph <- wordcloud2(mtt_reviews_01, size=3.0)
-#         saveWidget(my_graph,"data/tmp4.html",selfcontained = F)
-#         webshot("data/tmp4.html","data/WordClouds/mtt_reviews_01.png", delay =3, vwidth = 1200, vheight=3200)
-#         file.remove("data/tmp4.html")
-#         unlink("data/tmp4_files", recursive = TRUE)
-#       
-#         my_graph <- wordcloud2(mtt_reviews_02, size=3.0)
-#         saveWidget(my_graph,"data/tmp5.html",selfcontained = F)
-#         webshot("data/tmp5.html","data/WordClouds/mtt_reviews_02.png", delay =3, vwidth = 1200, vheight=3200)
-#         file.remove("data/tmp5.html")
-#         unlink("data/tmp5_files", recursive = TRUE)
-#       
-#         my_graph <- wordcloud2(mtt_reviews_03, size=3.0)
-#         saveWidget(my_graph,"data/tmp6.html",selfcontained = F)
-#         webshot("data/tmp6.html","data/WordClouds/mtt_reviews_03.png", delay =3, vwidth = 1200, vheight=3200)
-#         file.remove("data/tmp6.html")
-#         unlink("data/tmp6_files", recursive = TRUE)
-#       
-#         my_graph <- wordcloud2(plq2g_about_01, size=3.0)
-#         saveWidget(my_graph,"data/tmp7.html",selfcontained = F)
-#         webshot("data/tmp7.html","data/WordClouds/plq2g_about_01.png", delay =3, vwidth = 1200, vheight=3200)
-#         file.remove("data/tmp7.html")
-#         unlink("data/tmp7_files", recursive = TRUE)
-#       
-#         my_graph <- wordcloud2(plq2g_about_02, size=3.0)
-#         saveWidget(my_graph,"data/tmp8.html",selfcontained = F)
-#         webshot("data/tmp8.html","data/WordClouds/plq2g_about_02.png", delay =3, vwidth = 1200, vheight=3200)
-#         file.remove("data/tmp8.html")
-#         unlink("data/tmp8_files", recursive = TRUE)
-#       
-#         my_graph <- wordcloud2(plq2g_about_03, size=3.0)
-#         saveWidget(my_graph,"data/tmp9.html",selfcontained = F)
-#         webshot("data/tmp9.html","data/WordClouds/plq2g_about_03.png", delay =3, vwidth = 1200, vheight=3200)
-#         file.remove("data/tmp9.html")
-#         unlink("data/tmp9_files", recursive = TRUE)
-#       
-#         my_graph <- wordcloud2(plq2g_reviews_01, size=3.0)
-#         saveWidget(my_graph,"data/tmp10.html",selfcontained = F)
-#         webshot("data/tmp10.html","data/WordClouds/plq2g_reviews_01.png", delay =3, vwidth = 1200, vheight=3200)
-#         file.remove("data/tmp10.html")
-#         unlink("data/tmp10_files", recursive = TRUE)
-#       
-#         my_graph <- wordcloud2(plq2g_reviews_02, size=3.0)
-#         saveWidget(my_graph,"data/tmp11.html",selfcontained = F)
-#         webshot("data/tmp11.html","data/WordClouds/plq2g_reviews_02.png", delay =3, vwidth = 1200, vheight=3200)
-#         file.remove("data/tmp11.html")
-#         unlink("data/tmp11_files", recursive = TRUE)
-#       
-#         my_graph <- wordcloud2(plq2g_reviews_03, size=3.0)
-#         saveWidget(my_graph,"data/tmp12.html",selfcontained = F)
-#         webshot("data/tmp12.html","data/WordClouds/plq2g_reviews_03.png", delay =3, vwidth = 1200, vheight=3200)
-#         file.remove("data/tmp12.html")
-#         unlink("data/tmp12_files", recursive = TRUE)
-#       
-#         my_graph <- wordcloud2(qt_about_01, size=3.0)
-#         saveWidget(my_graph,"data/tmp13.html",selfcontained = F)
-#         webshot("data/tmp13.html","data/WordClouds/qt_about_01.png", delay =3, vwidth = 1200, vheight=3200)
-#         file.remove("data/tmp13.html")
-#         unlink("data/tmp13_files", recursive = TRUE)
-#       
-#         my_graph <- wordcloud2(qt_about_02, size=3.0)
-#         saveWidget(my_graph,"data/tmp14.html",selfcontained = F)
-#         webshot("data/tmp14.html","data/WordClouds/qt_about_02.png", delay =3, vwidth = 1200, vheight=3200)
-#         file.remove("data/tmp14.html")
-#         unlink("data/tmp14_files", recursive = TRUE)
-#       
-#         my_graph <- wordcloud2(qt_about_03, size=3.0)
-#         saveWidget(my_graph,"data/tmp15.html",selfcontained = F)
-#         webshot("data/tmp15.html","data/WordClouds/qt_about_03.png", delay =3, vwidth = 1200, vheight=3200)
-#         file.remove("data/tmp15.html")
-#         unlink("data/tmp15_files", recursive = TRUE)
-#       
-#         my_graph <- wordcloud2(qt_reviews_01, size=3.0)
-#         saveWidget(my_graph,"data/tmp16.html",selfcontained = F)
-#         webshot("data/tmp16.html","data/WordClouds/qt_reviews_01.png", delay =3, vwidth = 1200, vheight=3200)
-#         file.remove("data/tmp16.html")
-#         unlink("data/tmp16_files", recursive = TRUE)
-#       
-#         my_graph <- wordcloud2(qt_reviews_02, size=3.0)
-#         saveWidget(my_graph,"data/tmp17.html",selfcontained = F)
-#         webshot("data/tmp17.html","data/WordClouds/qt_reviews_02.png", delay =3, vwidth = 1200, vheight=3200)
-#         file.remove("data/tmp17.html")
-#         unlink("data/tmp17_files", recursive = TRUE)
-#       
-#         my_graph <- wordcloud2(qt_reviews_03, size=3.0)
-#         saveWidget(my_graph,"data/tmp18.html",selfcontained = F)
-#         webshot("data/tmp18.html","data/WordClouds/qt_reviews_03.png", delay =3, vwidth = 1200, vheight=3200)
-#         file.remove("data/tmp18.html")
-#         unlink("data/tmp18_files", recursive = TRUE)
-#       
-#         my_graph <- wordcloud2(tc_about_01, size=3.0)
-#         saveWidget(my_graph,"data/tmp19.html",selfcontained = F)
-#         webshot("data/tmp19.html","data/WordClouds/tc_about_01.png", delay =3, vwidth = 1200, vheight=3200)
-#         file.remove("data/tmp19.html")
-#         unlink("data/tmp19_files", recursive = TRUE)
-#       
-#         my_graph <- wordcloud2(tc_about_02, size=3.0)
-#         saveWidget(my_graph,"data/tmp20.html",selfcontained = F)
-#         webshot("data/tmp20.html","data/WordClouds/tc_about_02.png", delay =3, vwidth = 1200, vheight=3200)
-#         file.remove("data/tmp20.html")
-#         unlink("data/tmp20_files", recursive = TRUE)
-#       
-#         my_graph <- wordcloud2(tc_about_03, size=3.0)
-#         saveWidget(my_graph,"data/tmp21.html",selfcontained = F)
-#         webshot("data/tmp21.html","data/WordClouds/tc_about_03.png", delay =3, vwidth = 1200, vheight=3200)
-#         file.remove("data/tmp21.html")
-#         unlink("data/tmp21_files", recursive = TRUE)
-#       
-#         my_graph <- wordcloud2(tc_reviews_01, size=3.0)
-#         saveWidget(my_graph,"data/tmp22.html",selfcontained = F)
-#         webshot("data/tmp22.html","data/WordClouds/tc_reviews_01.png", delay =3, vwidth = 1200, vheight=3200)
-#         file.remove("data/tmp22.html")
-#         unlink("data/tmp22_files", recursive = TRUE)
-#       
-#         my_graph <- wordcloud2(tc_reviews_02, size=3.0)
-#         saveWidget(my_graph,"data/tmp23.html",selfcontained = F)
-#         webshot("data/tmp23.html","data/WordClouds/tc_reviews_02.png", delay =3, vwidth = 1200, vheight=3200)
-#         file.remove("data/tmp23.html")
-#         unlink("data/tmp23_files", recursive = TRUE)
-#       
-#         my_graph <- wordcloud2(tc_reviews_03, size=3.0)
-#         saveWidget(my_graph,"data/tmp24.html",selfcontained = F)
-#         webshot("data/tmp24.html","data/WordClouds/tc_reviews_03.png", delay =3, vwidth = 1200, vheight=3200)
-#         file.remove("data/tmp24.html")
-#         unlink("data/tmp24_files", recursive = TRUE)
-#         
-#         my_graph <- wordcloud2(per_text_01, size=3.0)
-#         saveWidget(my_graph,"data/tmp24.html",selfcontained = F)
-#         webshot("data/tmp24.html","data/WordClouds/per_text_01.png", delay =3, vwidth = 1200, vheight=3200)
-#         file.remove("data/tmp24.html")
-#         unlink("data/tmp24_files", recursive = TRUE)
-#         
-#         my_graph <- wordcloud2(per_text_02, size=3.0)
-#         saveWidget(my_graph,"data/tmp24.html",selfcontained = F)
-#         webshot("data/tmp24.html","data/WordClouds/per_text_02.png", delay =3, vwidth = 1200, vheight=3200)
-#         file.remove("data/tmp24.html")
-#         unlink("data/tmp24_files", recursive = TRUE)
-#        
-#          my_graph <- wordcloud2(per_text_03, size=3.0)
-#         saveWidget(my_graph,"data/tmp24.html",selfcontained = F)
-#         webshot("data/tmp24.html","data/WordClouds/per_text_03.png", delay =3, vwidth = 1200, vheight=3200)
-#         file.remove("data/tmp24.html")
-#         unlink("data/tmp24_files", recursive = TRUE)  
-# 
+#WordClouds
+        set.seed(1234) # for reproducibility
+
+
+        my_graph <- wordcloud2(mtt_about_01, size=1.0)
+        saveWidget(my_graph,"data/tmp.html",selfcontained = F)
+        webshot("data/tmp.html","data/WordClouds/mtt_about_01.png", delay = 5, vwidth = 2000, vheight = 2000)
+        file.remove("data/tmp.html")
+        unlink("data/tmp_files", recursive = TRUE)
+
+        my_graph <- wordcloud2(mtt_about_02, size=1.0)
+        saveWidget(my_graph,"data/tmp2.html",selfcontained = F)
+        webshot("data/tmp2.html","data/WordClouds/mtt_about_02.png", delay = 5, vwidth = 2000, vheight = 2000)
+        file.remove("data/tmp2.html")
+        unlink("data/tmp2_files", recursive = TRUE)
+
+        my_graph <- wordcloud2(mtt_about_03, size=0.5)
+        saveWidget(my_graph,"data/tmp3.html",selfcontained = F)
+        webshot("data/tmp3.html","data/WordClouds/mtt_about_03.png", delay = 5, vwidth = 2000, vheight = 2000)
+        file.remove("data/tmp3.html")
+        unlink("data/tmp3_files", recursive = TRUE)
+
+        my_graph <- wordcloud2(mtt_reviews_01, size=3.0)
+        saveWidget(my_graph,"data/tmp4.html",selfcontained = F)
+        webshot("data/tmp4.html","data/WordClouds/mtt_reviews_01.png", delay = 5, vwidth = 2000, vheight = 2000)
+        file.remove("data/tmp4.html")
+        unlink("data/tmp4_files", recursive = TRUE)
+
+        my_graph <- wordcloud2(mtt_reviews_02, size=3.0)
+        saveWidget(my_graph,"data/tmp5.html",selfcontained = F)
+        webshot("data/tmp5.html","data/WordClouds/mtt_reviews_02.png", delay = 5, vwidth = 2000, vheight = 2000)
+        file.remove("data/tmp5.html")
+        unlink("data/tmp5_files", recursive = TRUE)
+
+        my_graph <- wordcloud2(mtt_reviews_03, size=0.75)
+        saveWidget(my_graph,"data/tmp6.html",selfcontained = F)
+        webshot("data/tmp6.html","data/WordClouds/mtt_reviews_03.png", delay = 5, vwidth = 2000, vheight = 2000)
+        file.remove("data/tmp6.html")
+        unlink("data/tmp6_files", recursive = TRUE)
+
+        my_graph <- wordcloud2(plq2g_about_01, size=3.0)
+        saveWidget(my_graph,"data/tmp7.html",selfcontained = F)
+        webshot("data/tmp7.html","data/WordClouds/plq2g_about_01.png", delay = 5, vwidth = 2000, vheight = 2000)
+        file.remove("data/tmp7.html")
+        unlink("data/tmp7_files", recursive = TRUE)
+
+        my_graph <- wordcloud2(plq2g_about_02, size=3.0)
+        saveWidget(my_graph,"data/tmp8.html",selfcontained = F)
+        webshot("data/tmp8.html","data/WordClouds/plq2g_about_02.png", delay = 5, vwidth = 2000, vheight = 2000)
+        file.remove("data/tmp8.html")
+        unlink("data/tmp8_files", recursive = TRUE)
+
+        my_graph <- wordcloud2(plq2g_about_03, size=1.0)
+        saveWidget(my_graph,"data/tmp9.html",selfcontained = F)
+        webshot("data/tmp9.html","data/WordClouds/plq2g_about_03.png", delay = 5, vwidth = 2000, vheight = 2000)
+        file.remove("data/tmp9.html")
+        unlink("data/tmp9_files", recursive = TRUE)
+
+        my_graph <- wordcloud2(plq2g_reviews_01, size=3.0)
+        saveWidget(my_graph,"data/tmp10.html",selfcontained = F)
+        webshot("data/tmp10.html","data/WordClouds/plq2g_reviews_01.png", delay = 5, vwidth = 2000, vheight = 2000)
+        file.remove("data/tmp10.html")
+        unlink("data/tmp10_files", recursive = TRUE)
+
+        my_graph <- wordcloud2(plq2g_reviews_02, size=3.0)
+        saveWidget(my_graph,"data/tmp11.html",selfcontained = F)
+        webshot("data/tmp11.html","data/WordClouds/plq2g_reviews_02.png", delay = 5, vwidth = 2000, vheight = 2000)
+        file.remove("data/tmp11.html")
+        unlink("data/tmp11_files", recursive = TRUE)
+
+        my_graph <- wordcloud2(plq2g_reviews_03, size=1.0)
+        saveWidget(my_graph,"data/tmp12.html",selfcontained = F)
+        webshot("data/tmp12.html","data/WordClouds/plq2g_reviews_03.png", delay = 5, vwidth = 2000, vheight = 2000)
+        file.remove("data/tmp12.html")
+        unlink("data/tmp12_files", recursive = TRUE)
+
+        my_graph <- wordcloud2(qt_about_01, size=3.0)
+        saveWidget(my_graph,"data/tmp13.html",selfcontained = F)
+        webshot("data/tmp13.html","data/WordClouds/qt_about_01.png", delay = 5, vwidth = 2000, vheight = 2000)
+        file.remove("data/tmp13.html")
+        unlink("data/tmp13_files", recursive = TRUE)
+
+        my_graph <- wordcloud2(qt_about_02, size=3.0)
+        saveWidget(my_graph,"data/tmp14.html",selfcontained = F)
+        webshot("data/tmp14.html","data/WordClouds/qt_about_02.png", delay = 5, vwidth = 2000, vheight = 2000)
+        file.remove("data/tmp14.html")
+        unlink("data/tmp14_files", recursive = TRUE)
+
+        my_graph <- wordcloud2(qt_about_03, size=1.0)
+        saveWidget(my_graph,"data/tmp15.html",selfcontained = F)
+        webshot("data/tmp15.html","data/WordClouds/qt_about_03.png", delay = 5, vwidth = 2000, vheight = 2000)
+        file.remove("data/tmp15.html")
+        unlink("data/tmp15_files", recursive = TRUE)
+
+        my_graph <- wordcloud2(qt_reviews_01, size=3.0)
+        saveWidget(my_graph,"data/tmp16.html",selfcontained = F)
+        webshot("data/tmp16.html","data/WordClouds/qt_reviews_01.png", delay = 5, vwidth = 2000, vheight = 2000)
+        file.remove("data/tmp16.html")
+        unlink("data/tmp16_files", recursive = TRUE)
+
+        my_graph <- wordcloud2(qt_reviews_02, size=1.0)
+        saveWidget(my_graph,"data/tmp17.html",selfcontained = F)
+        webshot("data/tmp17.html","data/WordClouds/qt_reviews_02.png", delay = 5, vwidth = 2000, vheight = 2000)
+        file.remove("data/tmp17.html")
+        unlink("data/tmp17_files", recursive = TRUE)
+
+        my_graph <- wordcloud2(qt_reviews_03, size=1.0)
+        saveWidget(my_graph,"data/tmp18.html",selfcontained = F)
+        webshot("data/tmp18.html","data/WordClouds/qt_reviews_03.png", delay = 5, vwidth = 2000, vheight = 2000)
+        file.remove("data/tmp18.html")
+        unlink("data/tmp18_files", recursive = TRUE)
+
+        my_graph <- wordcloud2(tc_about_01, size=3.0)
+        saveWidget(my_graph,"data/tmp19.html",selfcontained = F)
+        webshot("data/tmp19.html","data/WordClouds/tc_about_01.png", delay = 5, vwidth = 2000, vheight = 2000)
+        file.remove("data/tmp19.html")
+        unlink("data/tmp19_files", recursive = TRUE)
+
+        my_graph <- wordcloud2(tc_about_02, size=3.0)
+        saveWidget(my_graph,"data/tmp20.html",selfcontained = F)
+        webshot("data/tmp20.html","data/WordClouds/tc_about_02.png", delay = 5, vwidth = 2000, vheight = 2000)
+        file.remove("data/tmp20.html")
+        unlink("data/tmp20_files", recursive = TRUE)
+
+        my_graph <- wordcloud2(tc_about_03, size=1.0)
+        saveWidget(my_graph,"data/tmp21.html",selfcontained = F)
+        webshot("data/tmp21.html","data/WordClouds/tc_about_03.png", delay = 5, vwidth = 2000, vheight = 2000)
+        file.remove("data/tmp21.html")
+        unlink("data/tmp21_files", recursive = TRUE)
+
+        my_graph <- wordcloud2(tc_reviews_01, size=2.0)
+        saveWidget(my_graph,"data/tmp22.html",selfcontained = F)
+        webshot("data/tmp22.html","data/WordClouds/tc_reviews_01.png", delay = 5, vwidth = 2000, vheight = 2000)
+        file.remove("data/tmp22.html")
+        unlink("data/tmp22_files", recursive = TRUE)
+
+        my_graph <- wordcloud2(tc_reviews_02, size=3.0)
+        saveWidget(my_graph,"data/tmp23.html",selfcontained = F)
+        webshot("data/tmp23.html","data/WordClouds/tc_reviews_02.png", delay = 5, vwidth = 2000, vheight = 2000)
+        file.remove("data/tmp23.html")
+        unlink("data/tmp23_files", recursive = TRUE)
+
+        my_graph <- wordcloud2(tc_reviews_03, size=1.0)
+        saveWidget(my_graph,"data/tmp24.html",selfcontained = F)
+        webshot("data/tmp24.html","data/WordClouds/tc_reviews_03.png", delay = 5, vwidth = 2000, vheight = 2000)
+        file.remove("data/tmp24.html")
+        unlink("data/tmp24_files", recursive = TRUE)
+
+        my_graph <- wordcloud2(per_text_01, size=3.0)
+        saveWidget(my_graph,"data/tmp25.html",selfcontained = F)
+        webshot("data/tmp25.html","data/WordClouds/per_text_01.png", delay = 5, vwidth = 2000, vheight = 2000)
+        file.remove("data/tmp25.html")
+        unlink("data/tmp25_files", recursive = TRUE)
+
+        my_graph <- wordcloud2(per_text_02, size=3.0)
+        saveWidget(my_graph,"data/tmp26.html",selfcontained = F)
+        webshot("data/tmp26.html","data/WordClouds/per_text_02.png", delay = 5, vwidth = 2000, vheight = 2000)
+        file.remove("data/tmp26.html")
+        unlink("data/tmp26_files", recursive = TRUE)
+
+        my_graph <- wordcloud2(per_text_03, size=1.0)
+        saveWidget(my_graph,"data/tmp27.html",selfcontained = F)
+        webshot("data/tmp27.html","data/WordClouds/per_text_03.png", delay = 5, vwidth = 2000, vheight = 2000)
+        file.remove("data/tmp27.html")
+        unlink("data/tmp27_files", recursive = TRUE)
+
 
 
 
