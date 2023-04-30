@@ -1,3 +1,8 @@
+### Crystal Jones-Howe                 ###
+### Olivia Mules                       ###
+### INF 722:  Information Organization ###
+### Professor Gangolly                 ###
+
 ###Use these libraries###
     library(tidyverse)
     library(tidytext)
